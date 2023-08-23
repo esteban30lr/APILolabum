@@ -11,24 +11,24 @@ namespace Lolabum.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VistaPedidoConDatoController : ControllerBase
+    public class VistaEmpleadoConDatoController : ControllerBase
     {
         private readonly LolabumContext _context;
 
-        public VistaPedidoConDatoController(LolabumContext context)
+        public VistaEmpleadoConDatoController(LolabumContext context)
         {
             _context = context;
         }
 
         // GET: api/VistaEmpleadoConDato
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<VistaPedidoConDato>>> GetVistaPedidoConDato()
+        public async Task<ActionResult<IEnumerable<VistaEmpleadoConDato>>> GetVistaEmpleadoConDato()
         {
-            if (_context.VistaPedidoConDatos == null)
+            if (_context.VistaEmpleadoConDatos == null)
             {
                 return NotFound();
             }
-            return await _context.VistaPedidoConDatos.ToListAsync();
+            return await _context.VistaEmpleadoConDatos.ToListAsync();
         }
     }
 }

@@ -31,6 +31,10 @@ public partial class LolabumContext : DbContext
 
     public virtual DbSet<Vehiculo> Vehiculos { get; set; }
 
+    public virtual DbSet<VistaClienteConDato> VistaClienteConDatos { get; set; }
+
+    public virtual DbSet<VistaEmpleadoConDato> VistaEmpleadoConDatos { get; set; }
+
     public virtual DbSet<VistaPedidoConDato> VistaPedidoConDatos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -221,6 +225,58 @@ public partial class LolabumContext : DbContext
             entity.HasOne(d => d.IdConcesionarioNavigation).WithMany(p => p.Vehiculos)
                 .HasForeignKey(d => d.IdConcesionario)
                 .HasConstraintName("PK_ID_CONCESIONARIO");
+        });
+
+        modelBuilder.Entity<VistaClienteConDato>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VistaClienteConDatos");
+
+            entity.Property(e => e.ClienteApellido)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("CLIENTE_APELLIDO");
+            entity.Property(e => e.ClienteNombre)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("CLIENTE_NOMBRE");
+            entity.Property(e => e.Contrasena)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("CONTRASENA");
+            entity.Property(e => e.IdCliente).HasColumnName("ID_CLIENTE");
+            entity.Property(e => e.IdPersona).HasColumnName("ID_PERSONA");
+            entity.Property(e => e.Usuario)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("USUARIO");
+        });
+
+        modelBuilder.Entity<VistaEmpleadoConDato>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VistaEmpleadoConDatos");
+
+            entity.Property(e => e.Contrasena)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("CONTRASENA");
+            entity.Property(e => e.EmpleadoApellido)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("EMPLEADO_APELLIDO");
+            entity.Property(e => e.EmpleadoNombre)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("EMPLEADO_NOMBRE");
+            entity.Property(e => e.IdEmpleado).HasColumnName("ID_EMPLEADO");
+            entity.Property(e => e.IdPersona).HasColumnName("ID_PERSONA");
+            entity.Property(e => e.Usuario)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("USUARIO");
         });
 
         modelBuilder.Entity<VistaPedidoConDato>(entity =>
