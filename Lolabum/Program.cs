@@ -3,6 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 // Add services to the container.
 
@@ -12,7 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<LolabumContext>(options =>
 {
-    options.UseSqlServer("Server=DESKTOP-VVT0133;Database=lolabum; Trusted_Connection=true; MultipleActivateResultSets=true;");
+    options.UseSqlServer("Server=Esteban_pc;Database=lolabum; Trusted_Connection=true; MultipleActivateResultSets=true;");
 });
 
 var app = builder.Build();
@@ -25,7 +31,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors();
 app.UseAuthorization();
 
 app.MapControllers();

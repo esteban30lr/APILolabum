@@ -39,13 +39,13 @@ public partial class LolabumContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-VVT0133; Database=lolabum; Trusted_Connection=True; TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=Esteban_pc; Database=lolabum; Trusted_Connection=True; TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Categorium>(entity =>
         {
-            entity.HasKey(e => e.IdCategoria).HasName("PK__CATEGORI__4BD51FA54D70D355");
+            entity.HasKey(e => e.IdCategoria).HasName("PK__CATEGORI__4BD51FA594B329BE");
 
             entity.ToTable("CATEGORIA");
 
@@ -58,7 +58,7 @@ public partial class LolabumContext : DbContext
 
         modelBuilder.Entity<Cliente>(entity =>
         {
-            entity.HasKey(e => e.IdCliente).HasName("PK__CLIENTE__23A341303B336EE4");
+            entity.HasKey(e => e.IdCliente).HasName("PK__CLIENTE__23A3413026774514");
 
             entity.ToTable("CLIENTE");
 
@@ -76,12 +76,12 @@ public partial class LolabumContext : DbContext
             entity.HasOne(d => d.IdPersonaNavigation).WithMany(p => p.Clientes)
                 .HasForeignKey(d => d.IdPersona)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("PK_ID_PERSONA");
+                .HasConstraintName("PK_ID_PERSONA_CLIENTE");
         });
 
         modelBuilder.Entity<Concescionario>(entity =>
         {
-            entity.HasKey(e => e.IdConcesionario).HasName("PK__CONCESCI__A797951AD0EB92E8");
+            entity.HasKey(e => e.IdConcesionario).HasName("PK__CONCESCI__A797951A21A342E1");
 
             entity.ToTable("CONCESCIONARIO");
 
@@ -103,7 +103,7 @@ public partial class LolabumContext : DbContext
 
         modelBuilder.Entity<Empleado>(entity =>
         {
-            entity.HasKey(e => e.IdEmpleado).HasName("PK__EMPLEADO__922CA26946E93ADE");
+            entity.HasKey(e => e.IdEmpleado).HasName("PK__EMPLEADO__922CA269449B1262");
 
             entity.ToTable("EMPLEADO");
 
@@ -126,7 +126,7 @@ public partial class LolabumContext : DbContext
 
         modelBuilder.Entity<Factura>(entity =>
         {
-            entity.HasKey(e => e.IdFactura).HasName("PK__FACTURA__4A921BEDA54B8147");
+            entity.HasKey(e => e.IdFactura).HasName("PK__FACTURA__4A921BED450F43D3");
 
             entity.ToTable("FACTURA");
 
@@ -139,7 +139,7 @@ public partial class LolabumContext : DbContext
 
         modelBuilder.Entity<Pedido>(entity =>
         {
-            entity.HasKey(e => e.IdPedido).HasName("PK__PEDIDO__A05C2F2A29322B6B");
+            entity.HasKey(e => e.IdPedido).HasName("PK__PEDIDO__A05C2F2ADA2F4C52");
 
             entity.ToTable("PEDIDO");
 
@@ -155,7 +155,7 @@ public partial class LolabumContext : DbContext
             entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Pedidos)
                 .HasForeignKey(d => d.IdCliente)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("PK_ID_CLIENTE");
+                .HasConstraintName("FK_PEDIDO_CLIENTE");
 
             entity.HasOne(d => d.IdFacturaNavigation).WithMany(p => p.Pedidos)
                 .HasForeignKey(d => d.IdFactura)
@@ -170,7 +170,7 @@ public partial class LolabumContext : DbContext
 
         modelBuilder.Entity<Persona>(entity =>
         {
-            entity.HasKey(e => e.IdPersona).HasName("PK__PERSONA__782441495CE5C66D");
+            entity.HasKey(e => e.IdPersona).HasName("PK__PERSONA__78244149CDAC86EE");
 
             entity.ToTable("PERSONA");
 
@@ -202,7 +202,7 @@ public partial class LolabumContext : DbContext
 
         modelBuilder.Entity<Vehiculo>(entity =>
         {
-            entity.HasKey(e => e.IdVehiculos).HasName("PK__VEHICULO__CD63295547D803F5");
+            entity.HasKey(e => e.IdVehiculos).HasName("PK__VEHICULO__CD632955F182B7AC");
 
             entity.ToTable("VEHICULOS");
 
