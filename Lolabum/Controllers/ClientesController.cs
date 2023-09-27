@@ -22,14 +22,33 @@ namespace Lolabum.Controllers
 
         // GET: api/Clientes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        public async Task<ActionResult<IEnumerable<object>>> GetClientes()
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
-            return await _context.Clientes.ToListAsync();
+            var clientes = await (from cliente in _context.Clientes
+                                  join persona in _context.Personas on cliente.IdPersona equals persona.IdPersona
+                                  select new
+                                  {
+                                      cliente.Usuario,
+                                      cliente.IdCliente,
+                                      persona.Identificacion,
+                                      persona.Nombre1,
+                                      persona.Nombre2,
+                                      persona.Apellido1,
+                                      persona.Apellido2,
+                                      persona.Correo,
+                                      persona.Telefono,
+                                      persona.Edad
+                                  }).ToListAsync();
+
+            if (clientes.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return clientes;
         }
+
+
 
         // GET: api/Clientes/5
         [HttpGet("{id}")]

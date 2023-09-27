@@ -17,7 +17,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<LolabumContext>(options =>
-{
+{   
+    //cambiar configuración servidor
     options.UseSqlServer("Server=Esteban_pc;Database=lolabum; Trusted_Connection=true; MultipleActivateResultSets=true;");
 });
 
