@@ -24,8 +24,8 @@ namespace Lolabum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetClientes()
         {
-            var clientes = await (from cliente in _context.Clientes
-                                  join persona in _context.Personas on cliente.IdPersona equals persona.IdPersona
+            var clientes =        from cliente in await _context.Clientes.ToListAsync()
+                                  join persona in await _context.Personas.ToListAsync() on cliente.IdPersona equals persona.IdPersona
                                   select new
                                   {
                                       cliente.Usuario,
@@ -38,14 +38,14 @@ namespace Lolabum.Controllers
                                       persona.Correo,
                                       persona.Telefono,
                                       persona.Edad
-                                  }).ToListAsync();
+                                  };
 
-            if (clientes.Count == 0)
+            if (clientes.ToList().Count == 0)
             {
                 return NotFound();
             }
 
-            return clientes;
+            return clientes.ToList();
         }
 
 
