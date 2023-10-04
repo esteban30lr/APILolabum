@@ -24,28 +24,29 @@ namespace Lolabum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetEmpleados()
         {
-            var empleados = await (from empleado in _context.Empleados
-                                   join persona in _context.Personas on empleado.IdPersona equals persona.IdPersona
-                                   select new
-                                   {
-                                       empleado.Usuario,
-                                       empleado.IdEmpleado,
-                                       persona.Identificacion,
-                                       persona.Nombre1,
-                                       persona.Nombre2,
-                                       persona.Apellido1,
-                                       persona.Apellido2,
-                                       persona.Correo,
-                                       persona.Telefono,
-                                       persona.Edad
-                                   }).ToListAsync();
+            var empleados = from empleado in await _context.Empleados.ToListAsync()
+                            join persona in await _context.Personas.ToListAsync() on empleado.IdPersona equals persona.IdPersona
+                            select new
+                            {
+                                empleado.Usuario,
+                                empleado.IdEmpleado,
+                                persona.Identificacion,
+                                persona.Nombre1,
+                                persona.Nombre2,
+                                persona.Apellido1,
+                                persona.Apellido2,
+                                persona.Correo,
+                                persona.Telefono,
+                                persona.Edad
+                            };
 
 
-            if (empleados.Count == 0)
+            if (empleados.ToList().Count == 0)
             {
                 return NotFound();
             }
-            return empleados;
+
+            return empleados.ToList();
         }
 
         // GET: api/Empleadoes/5
