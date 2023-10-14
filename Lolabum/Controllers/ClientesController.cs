@@ -24,21 +24,21 @@ namespace Lolabum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetClientes()
         {
-            var clientes =        from cliente in await _context.Clientes.ToListAsync()
-                                  join persona in await _context.Personas.ToListAsync() on cliente.IdPersona equals persona.IdPersona
-                                  select new
-                                  {
-                                      cliente.Usuario,
-                                      cliente.IdCliente,
-                                      persona.Identificacion,
-                                      persona.Nombre1,
-                                      persona.Nombre2,
-                                      persona.Apellido1,
-                                      persona.Apellido2,
-                                      persona.Correo,
-                                      persona.Telefono,
-                                      persona.Edad
-                                  };
+            var clientes = from cliente in await _context.Clientes.ToListAsync()
+                           join persona in await _context.Personas.ToListAsync() on cliente.IdPersona equals persona.IdPersona
+                           select new
+                           {
+                               cliente.Usuario,
+                               cliente.IdCliente,
+                               persona.Identificacion,
+                               persona.Nombre1,
+                               persona.Nombre2,
+                               persona.Apellido1,
+                               persona.Apellido2,
+                               persona.Correo,
+                               persona.Telefono,
+                               persona.Edad
+                           };
 
             if (clientes.ToList().Count == 0)
             {
@@ -54,10 +54,10 @@ namespace Lolabum.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Cliente>> GetCliente(int id)
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
             var cliente = await _context.Clientes.FindAsync(id);
 
             if (cliente == null)
@@ -118,7 +118,8 @@ namespace Lolabum.Controllers
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction("GetCliente", new { id = cliente.IdCliente }, cliente);
-            }catch (DbUpdateConcurrencyException)
+            }
+            catch (DbUpdateConcurrencyException)
             {
                 return NoContent();
             }
