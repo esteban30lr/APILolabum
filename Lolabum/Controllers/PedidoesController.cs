@@ -80,19 +80,31 @@ namespace Lolabum.Controllers
             return NoContent();
         }
 
-        // POST: api/Pedidoes
+        // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Pedido>> PostPedido(Pedido pedido)
+        public async Task<ActionResult<Pedido>> PostCliente(PedidoCreacionModel pedido)
         {
-          if (_context.Pedidos == null)
-          {
-              return Problem("Entity set 'LolabumContext.Pedidos'  is null.");
-          }
-            _context.Pedidos.Add(pedido);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Crear un nuevo objeto Pedido con los datos necesarios
+                var nuevoPedido = new Pedido
+                {
+                    Pedido1 = pedido.Pedido1,
+                    IdCliente = pedido.IdCliente,
+                    IdFactura = pedido.IdFactura,
+                    IdVehiculos = pedido.IdVehiculos,
+                };
 
-            return CreatedAtAction("GetPedido", new { id = pedido.IdPedido }, pedido);
+                _context.Pedidos.Add(nuevoPedido);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetPedido", new { id = pedido.IdPedido }, pedido);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NoContent();
+            }
         }
 
         // DELETE: api/Pedidoes/5

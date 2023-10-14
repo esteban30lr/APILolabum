@@ -102,16 +102,26 @@ namespace Lolabum.Controllers
         // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
+        public async Task<ActionResult<Cliente>> PostCliente(ClienteCreacionModel cliente)
         {
-          if (_context.Clientes == null)
-          {
-              return Problem("Entity set 'LolabumContext.Clientes'  is null.");
-          }
-            _context.Clientes.Add(cliente);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Crear un nuevo objeto Cliente con los datos necesarios
+                var nuevoCliente = new Cliente
+                {
+                    IdPersona = cliente.IdPersona,
+                    Usuario = cliente.Usuario,
+                    Contrasena = cliente.Contrasena
+                };
 
-            return CreatedAtAction("GetCliente", new { id = cliente.IdCliente }, cliente);
+                _context.Clientes.Add(nuevoCliente);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetCliente", new { id = cliente.IdCliente }, cliente);
+            }catch (DbUpdateConcurrencyException)
+            {
+                return NoContent();
+            }
         }
 
         // DELETE: api/Clientes/5
