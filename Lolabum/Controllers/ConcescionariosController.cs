@@ -24,11 +24,11 @@ namespace Lolabum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Concescionario>>> GetConcescionarios()
         {
-          if (_context.Concescionarios == null)
-          {
-              return NotFound();
-          }
-            return await _context.Concescionarios.ToListAsync();
+            var concescionarios = from concescionario in await _context.Concescionarios.ToListAsync()
+                             where concescionario.Estado == true
+                             select concescionario;
+
+            return concescionarios.ToList();
         }
 
         // GET: api/Concescionarios/5
@@ -95,25 +95,40 @@ namespace Lolabum.Controllers
             return CreatedAtAction("GetConcescionario", new { id = concescionario.IdConcesionario }, concescionario);
         }
 
-        // DELETE: api/Concescionarios/5
-        [HttpDelete("{id}")]
+        // DELETE: api/Concescionarios/delete/5
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteConcescionario(int id)
         {
-            if (_context.Concescionarios == null)
-            {
-                return NotFound();
-            }
-            var concescionario = await _context.Concescionarios.FindAsync(id);
-            if (concescionario == null)
+            var concesionario = await _context.Concescionarios.FindAsync(id);
+
+            if (concesionario == null)
             {
                 return NotFound();
             }
 
-            _context.Concescionarios.Remove(concescionario);
-            await _context.SaveChangesAsync();
+            // Marcar el concesionario como inactivo
+            concesionario.Estado = false;
+            _context.Entry(concesionario).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ConcescionarioExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }
+ 
 
         private bool ConcescionarioExists(int id)
         {

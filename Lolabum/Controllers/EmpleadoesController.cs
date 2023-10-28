@@ -40,11 +40,6 @@ namespace Lolabum.Controllers
                                        persona.Edad
                                    }).ToListAsync();
 
-
-            if (empleados.Count == 0)
-            {
-                return NotFound();
-            }
             return empleados;
         }
 
@@ -96,20 +91,30 @@ namespace Lolabum.Controllers
 
             return NoContent();
         }
-
-        // POST: api/Empleadoes
+        // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Empleado>> PostEmpleado(Empleado empleado)
+        public async Task<ActionResult<Empleado>> PostEmpleado(EmpleadoCreacionModel empleado)
         {
-          if (_context.Empleados == null)
-          {
-              return Problem("Entity set 'LolabumContext.Empleados'  is null.");
-          }
-            _context.Empleados.Add(empleado);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Crear un nuevo objeto Cliente con los datos necesarios
+                var nuevoEmpleado = new Empleado
+                {
+                    IdPersona = empleado.IdPersona,
+                    Usuario = empleado.Usuario,
+                    Contrasena = empleado.Contrasena
+                };
 
-            return CreatedAtAction("GetEmpleado", new { id = empleado.IdEmpleado }, empleado);
+                _context.Empleados.Add(nuevoEmpleado);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetEmpleado", new { id = empleado.IdEmpleado }, empleado);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NoContent();
+            }
         }
 
         // DELETE: api/Empleadoes/5

@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace Lolabum.Models;
 
-public partial class VistaPedidoConDato
+public partial class VistaPedidoConDatosFull
 {
     public int IdPedido { get; set; }
 
     public string Pedido { get; set; } = null!;
-
-    public bool? Estado { get; set; }
 
     public int IdCliente { get; set; }
 
@@ -28,4 +26,8 @@ public partial class VistaPedidoConDato
     public string ConcesionarioNombre { get; set; } = null!;
 
     public string ConcesionarioDireccion { get; set; } = null!;
+
+    public int IdFactura { get; set; }
+
+    public DateTime FechaFactura { get; set; }
 }

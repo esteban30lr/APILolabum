@@ -24,11 +24,22 @@ namespace Lolabum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VistaPedidoConDato>>> GetVistaPedidoConDato()
         {
-            if (_context.VistaPedidoConDatos == null)
-            {
-                return NotFound();
-            }
+
+            var pedidos = from pedido in await _context.VistaPedidoConDatos.ToListAsync()
+                          where pedido.Estado == true
+                          select pedido;
+
+            return pedidos.ToList();
+
+        }
+
+        // GET: api/VistaEmpleadoConDato/full
+        [HttpGet("full")]
+        public async Task<ActionResult<IEnumerable<VistaPedidoConDato>>> GetVistaPedidoConDatoFull()
+        {
+
             return await _context.VistaPedidoConDatos.ToListAsync();
+
         }
     }
 }

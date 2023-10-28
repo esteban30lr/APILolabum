@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Lolabum.Models;
 
-public partial class Empleado
+public partial class EmpleadoCreacionModel
 {
     public int IdEmpleado { get; set; }
 
@@ -13,7 +13,4 @@ public partial class Empleado
 
     public string Contrasena { get; set; } = null!;
 
-    public bool? Estado { get; set; }
-
-    public virtual Persona IdPersonaNavigation { get; set; } = null!;
 }

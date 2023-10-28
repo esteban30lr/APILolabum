@@ -9,5 +9,7 @@ public partial class Categorium
 
     public string Nombre { get; set; } = null!;
 
+    public bool? Estado { get; set; }
+
     public virtual ICollection<Vehiculo> Vehiculos { get; set; } = new List<Vehiculo>();
 }

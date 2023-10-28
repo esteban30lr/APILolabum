@@ -15,6 +15,8 @@ public partial class Vehiculo
 
     public int? IdConcesionario { get; set; }
 
+    public bool? Estado { get; set; }
+
     public virtual Categorium? IdCategoriaNavigation { get; set; }
 
     public virtual Concescionario? IdConcesionarioNavigation { get; set; }

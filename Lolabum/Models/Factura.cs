@@ -9,7 +9,13 @@ public partial class Factura
 
     public DateTime FechaFactura { get; set; }
 
-    public bool State { get; set; }
+    public bool? EstadoFactura { get; set; }
+
+    public bool? Estado { get; set; }
+
+    public int? IdCliente { get; set; }
+
+    public virtual Cliente? IdClienteNavigation { get; set; }
 
     public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
 }

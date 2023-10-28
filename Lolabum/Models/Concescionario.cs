@@ -15,5 +15,7 @@ public partial class Concescionario
 
     public string? Email { get; set; }
 
+    public bool? Estado { get; set; }
+
     public virtual ICollection<Vehiculo> Vehiculos { get; set; } = new List<Vehiculo>();
 }

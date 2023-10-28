@@ -24,11 +24,12 @@ namespace Lolabum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categorium>>> GetCategoria()
         {
-          if (_context.Categoria == null)
-          {
-              return NotFound();
-          }
-            return await _context.Categoria.ToListAsync();
+
+            var categorias = from categoria in await _context.Categoria.ToListAsync()
+                             where categoria.Estado == true
+                             select categoria;
+
+            return categorias.ToList();
         }
 
         // GET: api/Categoriums/5
@@ -99,18 +100,32 @@ namespace Lolabum.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategorium(int id)
         {
-            if (_context.Categoria == null)
-            {
-                return NotFound();
-            }
-            var categorium = await _context.Categoria.FindAsync(id);
-            if (categorium == null)
+            var categoria = await _context.Categoria.FindAsync(id);
+
+            if (categoria == null)
             {
                 return NotFound();
             }
 
-            _context.Categoria.Remove(categorium);
-            await _context.SaveChangesAsync();
+            // Marcar el concesionario como inactivo
+            categoria.Estado = false;
+            _context.Entry(categoria).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CategoriumExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Lolabum.Models;
 
-public partial class PedidoCreacionModel
+public partial class PedidoEditarModel
 {
     public int IdPedido { get; set; }
 
@@ -12,5 +12,10 @@ public partial class PedidoCreacionModel
     public int IdCliente { get; set; }
 
     public int IdVehiculos { get; set; }
+
+    public int? IdFactura { get; set; }
+
+    public bool? Estado { get; set; }
+
 
 }

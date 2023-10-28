@@ -23,6 +23,8 @@ public partial class Persona
 
     public int? Telefono { get; set; }
 
+    public bool? Estado { get; set; }
+
     public virtual ICollection<Cliente> Clientes { get; set; } = new List<Cliente>();
 
     public virtual ICollection<Empleado> Empleados { get; set; } = new List<Empleado>();

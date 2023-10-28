@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,11 +35,15 @@ public partial class LolabumContext : DbContext
 
     public virtual DbSet<VistaEmpleadoConDato> VistaEmpleadoConDatos { get; set; }
 
+    public virtual DbSet<VistaFactura> VistaFacturas { get; set; }
+
     public virtual DbSet<VistaPedidoConDato> VistaPedidoConDatos { get; set; }
+
+    public virtual DbSet<VistaPedidoConDatosFull> VistaPedidoConDatosFulls { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=Esteban_pc; Database=lolabum; Trusted_Connection=True; TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=ESTEBAN_PC; Database=Lolabum; Trusted_Connection=True; TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,6 +54,9 @@ public partial class LolabumContext : DbContext
             entity.ToTable("CATEGORIA");
 
             entity.Property(e => e.IdCategoria).HasColumnName("ID_CATEGORIA");
+            entity.Property(e => e.Estado)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("ESTADO");
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -67,6 +74,9 @@ public partial class LolabumContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("CONTRASENA");
+            entity.Property(e => e.Estado)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("ESTADO");
             entity.Property(e => e.IdPersona).HasColumnName("ID_PERSONA");
             entity.Property(e => e.Usuario)
                 .HasMaxLength(50)
@@ -94,6 +104,9 @@ public partial class LolabumContext : DbContext
                 .HasMaxLength(60)
                 .IsUnicode(false)
                 .HasColumnName("EMAIL");
+            entity.Property(e => e.Estado)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("ESTADO");
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .IsUnicode(false)
@@ -112,6 +125,9 @@ public partial class LolabumContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("CONTRASENA");
+            entity.Property(e => e.Estado)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("ESTADO");
             entity.Property(e => e.IdPersona).HasColumnName("ID_PERSONA");
             entity.Property(e => e.Usuario)
                 .HasMaxLength(50)
@@ -131,23 +147,37 @@ public partial class LolabumContext : DbContext
             entity.ToTable("FACTURA");
 
             entity.Property(e => e.IdFactura).HasColumnName("ID_FACTURA");
+            entity.Property(e => e.Estado)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("ESTADO");
+            entity.Property(e => e.EstadoFactura)
+                .IsRequired()
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("ESTADO_FACTURA");
             entity.Property(e => e.FechaFactura)
                 .HasColumnType("date")
                 .HasColumnName("FECHA_FACTURA");
-            entity.Property(e => e.State).HasColumnName("STATE");
+            entity.Property(e => e.IdCliente).HasColumnName("ID_CLIENTE");
+
+            entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Facturas)
+                .HasForeignKey(d => d.IdCliente)
+                .HasConstraintName("FK_FACTURA_CLIENTE");
         });
 
         modelBuilder.Entity<Pedido>(entity =>
         {
-            entity.HasKey(e => e.IdPedido).HasName("PK__PEDIDO__A05C2F2ADA2F4C52");
+            entity.HasKey(e => e.IdPedido).HasName("PK__PEDIDO__A05C2F2ABC89CC94");
 
             entity.ToTable("PEDIDO");
 
             entity.Property(e => e.IdPedido).HasColumnName("ID_PEDIDO");
+            entity.Property(e => e.Estado)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("ESTADO");
             entity.Property(e => e.IdCliente).HasColumnName("ID_CLIENTE");
             entity.Property(e => e.IdFactura).HasColumnName("ID_FACTURA");
             entity.Property(e => e.IdVehiculos).HasColumnName("ID_VEHICULOS");
-            entity.Property(e => e.Pedido1)
+            entity.Property(e => e.pedido)
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("PEDIDO");
@@ -155,11 +185,10 @@ public partial class LolabumContext : DbContext
             entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.Pedidos)
                 .HasForeignKey(d => d.IdCliente)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PEDIDO_CLIENTE");
+                .HasConstraintName("PK_ID_CLIENTE");
 
             entity.HasOne(d => d.IdFacturaNavigation).WithMany(p => p.Pedidos)
                 .HasForeignKey(d => d.IdFactura)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("PK_ID_FACTURA");
 
             entity.HasOne(d => d.IdVehiculosNavigation).WithMany(p => p.Pedidos)
@@ -188,6 +217,9 @@ public partial class LolabumContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("CORREO");
             entity.Property(e => e.Edad).HasColumnName("EDAD");
+            entity.Property(e => e.Estado)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("ESTADO");
             entity.Property(e => e.Identificacion).HasColumnName("IDENTIFICACION");
             entity.Property(e => e.Nombre1)
                 .HasMaxLength(50)
@@ -207,6 +239,9 @@ public partial class LolabumContext : DbContext
             entity.ToTable("VEHICULOS");
 
             entity.Property(e => e.IdVehiculos).HasColumnName("ID_VEHICULOS");
+            entity.Property(e => e.Estado)
+                .HasDefaultValueSql("((1))")
+                .HasColumnName("ESTADO");
             entity.Property(e => e.IdCategoria).HasColumnName("ID_CATEGORIA");
             entity.Property(e => e.IdConcesionario).HasColumnName("ID_CONCESIONARIO");
             entity.Property(e => e.Nombre)
@@ -279,11 +314,73 @@ public partial class LolabumContext : DbContext
                 .HasColumnName("USUARIO");
         });
 
+        modelBuilder.Entity<VistaFactura>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VistaFactura");
+
+            entity.Property(e => e.Correo)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("correo");
+            entity.Property(e => e.FechaFactura)
+                .HasColumnType("date")
+                .HasColumnName("fecha_factura");
+            entity.Property(e => e.IdCliente).HasColumnName("id_cliente");
+            entity.Property(e => e.IdFactura).HasColumnName("id_factura");
+            entity.Property(e => e.Nombre1)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("nombre_1");
+        });
+
         modelBuilder.Entity<VistaPedidoConDato>(entity =>
         {
             entity
                 .HasNoKey()
                 .ToView("VistaPedidoConDatos");
+
+            entity.Property(e => e.ClienteApellido)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("CLIENTE_APELLIDO");
+            entity.Property(e => e.ClienteNombre)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("CLIENTE_NOMBRE");
+            entity.Property(e => e.ConcesionarioDireccion)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("CONCESIONARIO_DIRECCION");
+            entity.Property(e => e.ConcesionarioNombre)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("CONCESIONARIO_NOMBRE");
+            entity.Property(e => e.Estado).HasColumnName("ESTADO");
+            entity.Property(e => e.IdCliente).HasColumnName("ID_CLIENTE");
+            entity.Property(e => e.IdConcesionario).HasColumnName("ID_CONCESIONARIO");
+            entity.Property(e => e.IdPedido).HasColumnName("ID_PEDIDO");
+            entity.Property(e => e.IdVehiculos).HasColumnName("ID_VEHICULOS");
+            entity.Property(e => e.Pedido)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("PEDIDO");
+            entity.Property(e => e.VehiculoNombre)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("VEHICULO_NOMBRE");
+            entity.Property(e => e.VehiculoPrecio)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("VEHICULO_PRECIO");
+        });
+
+        modelBuilder.Entity<VistaPedidoConDatosFull>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("VistaPedidoConDatosFull");
 
             entity.Property(e => e.ClienteApellido)
                 .HasMaxLength(50)

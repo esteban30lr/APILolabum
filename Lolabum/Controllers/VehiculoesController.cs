@@ -24,11 +24,11 @@ namespace Lolabum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vehiculo>>> GetVehiculos()
         {
-          if (_context.Vehiculos == null)
-          {
-              return NotFound();
-          }
-            return await _context.Vehiculos.ToListAsync();
+            var vehiculos = from vehiculo in await _context.Vehiculos.ToListAsync()
+                                  where vehiculo.Estado == true
+                                  select vehiculo;
+
+            return vehiculos.ToList();
         }
 
         // GET: api/Vehiculoes/5
@@ -99,18 +99,32 @@ namespace Lolabum.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehiculo(int id)
         {
-            if (_context.Vehiculos == null)
-            {
-                return NotFound();
-            }
             var vehiculo = await _context.Vehiculos.FindAsync(id);
+
             if (vehiculo == null)
             {
                 return NotFound();
             }
 
-            _context.Vehiculos.Remove(vehiculo);
-            await _context.SaveChangesAsync();
+            // Marcar el concesionario como inactivo
+            vehiculo.Estado = false;
+            _context.Entry(vehiculo).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!VehiculoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }

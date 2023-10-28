@@ -24,11 +24,12 @@ namespace Lolabum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidos()
         {
-          if (_context.Pedidos == null)
-          {
-              return NotFound();
-          }
-            return await _context.Pedidos.ToListAsync();
+
+            var pedidos = from pedido in await _context.Pedidos.ToListAsync()
+                             where pedido.Estado == true
+                             select pedido;
+
+            return pedidos.ToList();
         }
 
         // GET: api/Pedidoes/5
@@ -52,14 +53,26 @@ namespace Lolabum.Controllers
         // PUT: api/Pedidoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPedido(int id, Pedido pedido)
+        public async Task<IActionResult> PutPedido(int id, PedidoEditarModel pedido)
         {
-            if (id != pedido.IdPedido)
+
+            var nuevoPedido = new Pedido
+            {
+                pedido = pedido.pedido,
+                IdCliente = pedido.IdCliente,
+                IdVehiculos = pedido.IdVehiculos,
+                IdFactura = pedido.IdFactura,
+                IdPedido = pedido.IdPedido,
+                Estado = pedido.Estado,
+            };
+
+
+            if (id != nuevoPedido.IdPedido)
             {
                 return BadRequest();
             }
 
-            _context.Entry(pedido).State = EntityState.Modified;
+            _context.Entry(nuevoPedido).State = EntityState.Modified;
 
             try
             {
@@ -78,6 +91,8 @@ namespace Lolabum.Controllers
             }
 
             return NoContent();
+
+
         }
 
         // POST: api/Clientes
@@ -90,9 +105,8 @@ namespace Lolabum.Controllers
                 // Crear un nuevo objeto Pedido con los datos necesarios
                 var nuevoPedido = new Pedido
                 {
-                    Pedido1 = pedido.Pedido1,
+                    pedido = pedido.pedido,
                     IdCliente = pedido.IdCliente,
-                    IdFactura = pedido.IdFactura,
                     IdVehiculos = pedido.IdVehiculos,
                 };
 
@@ -111,18 +125,32 @@ namespace Lolabum.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePedido(int id)
         {
-            if (_context.Pedidos == null)
-            {
-                return NotFound();
-            }
             var pedido = await _context.Pedidos.FindAsync(id);
+
             if (pedido == null)
             {
                 return NotFound();
             }
 
-            _context.Pedidos.Remove(pedido);
-            await _context.SaveChangesAsync();
+            // Marcar el concesionario como inactivo
+            pedido.Estado = false;
+            _context.Entry(pedido).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PedidoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }
