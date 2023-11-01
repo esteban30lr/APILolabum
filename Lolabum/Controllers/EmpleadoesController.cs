@@ -26,6 +26,7 @@ namespace Lolabum.Controllers
         {
             var empleados = await (from empleado in _context.Empleados
                                    join persona in _context.Personas on empleado.IdPersona equals persona.IdPersona
+                                   where empleado.Estado == true
                                    select new
                                    {
                                        empleado.Usuario,
@@ -131,11 +132,29 @@ namespace Lolabum.Controllers
                 return NotFound();
             }
 
-            _context.Empleados.Remove(empleado);
-            await _context.SaveChangesAsync();
+            // Marcar el empleado como inactivo
+            empleado.Estado = false;
+            _context.Entry(empleado).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!EmpleadoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }
+
 
         private bool EmpleadoExists(int id)
         {

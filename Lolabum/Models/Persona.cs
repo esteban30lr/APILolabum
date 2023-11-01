@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 
 namespace Lolabum.Models;
@@ -28,4 +29,9 @@ public partial class Persona
     public virtual ICollection<Cliente> Clientes { get; set; } = new List<Cliente>();
 
     public virtual ICollection<Empleado> Empleados { get; set; } = new List<Empleado>();
+
+    internal static ActionResult<IEnumerable<Persona>> ToList()
+    {
+        throw new NotImplementedException();
+    }
 }

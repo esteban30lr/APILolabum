@@ -26,6 +26,7 @@ namespace Lolabum.Controllers
         {
             var clientes = from cliente in await _context.Clientes.ToListAsync()
                            join persona in await _context.Personas.ToListAsync() on cliente.IdPersona equals persona.IdPersona
+                           where cliente.Estado == true
                            select new
                            {
                                cliente.Usuario,
@@ -138,9 +139,25 @@ namespace Lolabum.Controllers
             {
                 return NotFound();
             }
+            // Marcar el cliente como inactivo
+            cliente.Estado = false;
+            _context.Entry(cliente).State = EntityState.Modified;
 
-            _context.Clientes.Remove(cliente);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ClienteExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }
