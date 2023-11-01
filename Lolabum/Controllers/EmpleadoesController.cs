@@ -65,17 +65,25 @@ namespace Lolabum.Controllers
         // PUT: api/Empleadoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmpleado(int id, Empleado empleado)
+        public async Task<IActionResult> PutEmpleado(int id, EmpleadoCreacionModel empleado)
         {
             if (id != empleado.IdEmpleado)
             {
                 return BadRequest();
             }
 
-            _context.Entry(empleado).State = EntityState.Modified;
-
             try
             {
+                // Crear un nuevo objeto Cliente con los datos necesarios
+                var nuevoEmpleado = new Empleado
+                {
+                    IdPersona = empleado.IdPersona,
+                    Usuario = empleado.Usuario,
+                    Contrasena = empleado.Contrasena,
+                    IdEmpleado = empleado.IdEmpleado,
+                    Estado = true
+                };
+                _context.Entry(nuevoEmpleado).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

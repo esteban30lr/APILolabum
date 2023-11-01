@@ -19,7 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<LolabumContext>(options =>
 {   
     //cambiar configuración servidor
-    options.UseSqlServer("Server=DESKTOP-T4H0SDS;Database=lolabum; Trusted_Connection=true; MultipleActivateResultSets=true;");
+    options.UseSqlServer("Server=ESTEBAN_PC;Database=lolabum; Trusted_Connection=true; MultipleActivateResultSets=true;");
 });
 
 var app = builder.Build();

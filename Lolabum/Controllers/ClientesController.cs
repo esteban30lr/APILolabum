@@ -72,32 +72,36 @@ namespace Lolabum.Controllers
         // PUT: api/Clientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(int id, Cliente cliente)
+        public async Task<IActionResult> PutCliente(int id, ClienteCreacionModel cliente)
         {
             if (id != cliente.IdCliente)
             {
                 return BadRequest();
             }
-
-            _context.Entry(cliente).State = EntityState.Modified;
-
+            
             try
             {
+                // Crear un nuevo objeto Cliente con los datos necesarios
+                var nuevoCliente = new Cliente
+                {
+                    IdPersona = cliente.IdPersona,
+                    IdCliente = cliente.IdCliente,
+                    Usuario = cliente.Usuario,
+                    Contrasena = cliente.Contrasena,
+                    Estado = true,
+                };
+
+                _context.Entry(nuevoCliente).State = EntityState.Modified;
+
                 await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetCliente", new { id = cliente.IdCliente }, cliente);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ClienteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NoContent();
             }
 
-            return NoContent();
         }
 
         // POST: api/Clientes
