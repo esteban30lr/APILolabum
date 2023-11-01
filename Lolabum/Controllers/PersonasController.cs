@@ -24,21 +24,24 @@ namespace Lolabum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Persona>>> GetPersonas()
         {
-          if (_context.Personas == null)
-          {
-              return NotFound();
-          }
-            return await _context.Personas.ToListAsync();
+            var personas = (from persona in await _context.Personas.ToListAsync()
+                            where persona.Estado == true
+                            select persona).ToList();
+
+            return personas;
+
+
         }
 
         // GET: api/Personas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Persona>> GetPersona(int id)
         {
-          if (_context.Personas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Personas == null)
+            {
+                return NotFound();
+            }
+
             var persona = await _context.Personas.FindAsync(id);
 
             if (persona == null)
@@ -85,10 +88,11 @@ namespace Lolabum.Controllers
         [HttpPost]
         public async Task<ActionResult<Persona>> PostPersona(Persona persona)
         {
-          if (_context.Personas == null)
-          {
-              return Problem("Entity set 'LolabumContext.Personas'  is null.");
-          }
+            if (_context.Personas == null)
+            {
+                return Problem("Entity set 'LolabumContext.Personas' is null.");
+            }
+
             _context.Personas.Add(persona);
             await _context.SaveChangesAsync();
 
@@ -103,14 +107,48 @@ namespace Lolabum.Controllers
             {
                 return NotFound();
             }
+
             var persona = await _context.Personas.FindAsync(id);
             if (persona == null)
             {
                 return NotFound();
             }
 
-            _context.Personas.Remove(persona);
-            await _context.SaveChangesAsync();
+            // Inactivar la persona
+            persona.Estado = false;
+            _context.Entry(persona).State = EntityState.Modified;
+
+            // Inactivar el cliente si existe
+            var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.IdPersona == id);
+            if (cliente != null)
+            {
+                cliente.Estado = false;
+                _context.Entry(cliente).State = EntityState.Modified;
+            }
+
+            // Inactivar el empleado si existe
+            var empleado = await _context.Empleados.FirstOrDefaultAsync(e => e.IdPersona == id);
+            if (empleado != null)
+            {
+                empleado.Estado = false;
+                _context.Entry(empleado).State = EntityState.Modified;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PersonaExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }
