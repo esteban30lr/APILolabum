@@ -68,6 +68,22 @@ namespace Lolabum.Controllers
 
             return cliente;
         }
+        // GET: api/Usuarios
+        [HttpGet("{usuario}/{contrasena}")]
+        public async Task<ActionResult<Cliente>> GetUsuario(string usuario, string contrasena)
+        {
+            var usuarioEncontrado = await _context.Clientes
+                .Where(u => u.Usuario == usuario && u.Contrasena == contrasena && u.Estado == true)
+                .FirstOrDefaultAsync();
+
+            if (usuarioEncontrado == null)
+            {
+                return NotFound();
+            }
+
+            return usuarioEncontrado;
+        }
+
 
         // PUT: api/Clientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
